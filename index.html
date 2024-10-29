@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ <div class="card">
+    <div class="search">
+        <input type="text" placeholder="Enter city name" spellcheck="false">
+        <button><img src="images/search.png"></button>
+    </div>
+    <div class="weather">
+        
+        <h1 class="temp" id="temperature">22°c</h1>
+        <h2 class="city" id="cityName">Hyderabad</h2>
+        <div class="details">
+            <div class="col">
+                <img src="images/humidity.png">
+                <div>
+                    <p class="humidity" id="humidity">50%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col">
+                <img src="images/wind.png">
+                <div>
+                    <p class="wind" id="windSpeed">15 km/h</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+ <script>
+    const apiKey = 'de3a505c7a2e31645bf58a3d3b3c7349';
+    const apiUrl = "https://api.openweathermap.org/data/2.5/weather?&units=metric&q=";
+    const searchBox = document.querySelector(".search input");
+    const searchBtn = document.querySelector(".search button");
+
+    async function checkWeather(city = 'Hyderabad') {
+        const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`); // Fixed string interpolation
+        if (!response.ok) {
+            console.error('Error fetching weather data:', response.statusText);
+            return;
+        }
+        const data = await response.json();
+        console.log(data);
+        document.querySelector(".city").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
+        document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+        document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+        document.querySelector("#weatherIcon").src = `images/${data.weather[0].icon}.png`; // Update the weather icon
+    }
+
+    searchBtn.addEventListener("click", () => {
+        checkWeather(searchBox.value);
+    });
+
+    // Initial weather check for default city
+    checkWeather();
+ </script>
+</body>
+</html>
